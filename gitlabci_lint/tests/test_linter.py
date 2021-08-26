@@ -1,7 +1,7 @@
 import os
 from collections import namedtuple
 
-from gitlabci_lint import lint_it, run_check
+from gitlabci_lint.linter import lint_it, run_check
 
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
