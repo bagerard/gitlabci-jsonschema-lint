@@ -1,15 +1,8 @@
-import argparse
-import sys
 from typing import List
 
-from ruamel.yaml import YAML, CommentedMap
+from ruamel.yaml import CommentedMap
 
-
-yaml = YAML()
-yaml.indent(mapping=2, sequence=4, offset=2)
-yaml.width = 1_000_000  # High to avoid that it breaks lines
-
-YAML_ROOT = 0
+from gitlabci_lint.autoformatter import yaml, read_yaml_from_file, dump_yaml_to_file
 
 _AnyJob_ = "_AnyJob_"
 
@@ -27,22 +20,16 @@ ORDERING = {
         "tags": True,
         "only": True,
         "rules": True,
-        "services": True,
+        # "services": True,
         "variables": True,
         "script": True,
+        "after_script": True,
         "artifacts": True,
     },
 }
 
 
-def read_yaml(filepath: str) -> CommentedMap:
-    with open(filepath, "r") as fin:
-        return yaml.load(fin)
-
-
-def dump_yaml(filepath: str, data: CommentedMap) -> CommentedMap:
-    with open(filepath, "w") as fout:
-        return yaml.dump(data, stream=fout)
+YAML_ROOT = 0
 
 
 def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
@@ -73,7 +60,11 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
                 do_deeper_reorder and True in reordering_value
             )
         else:
-            is_job = "script" in data[dkey] and level == YAML_ROOT
+            is_job = (
+                isinstance(data[dkey], dict)
+                and "script" in data[dkey]
+                and level == YAML_ROOT
+            )
             if _AnyJob_ in ordering and is_job:
                 reordering_value = ordering[_AnyJob_]
                 do_deeper_reorder = True
@@ -102,36 +93,14 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
     return modified
 
 
-# def reorder(data: CommentedMap, ordering: dict) -> bool:
-#     modified = False
-#     pos = 0
-#     for key, value in ordering.items():
-#         if key == "*":
-#             # argh, need to loop in original data to identify the non-matched keys
-#             pass
-#
-#         if key in data or key == "*":
-#             reorder_key = value is True
-#             if isinstance(value, dict):
-#                 modified = reorder(data=data[key], ordering=value)
-#                 reorder_key = True in value
-#             if reorder_key:
-#                 popped_data = data.pop(key)
-#                 data.insert(pos, key, popped_data)
-#                 modified = True
-#                 pos += 1
-#     return modified
-
-
 def run_autoformatter(filepaths: List[str], ordering: dict):
     modified = False
     for filepath in filepaths:
-        yaml_data = read_yaml(filepath)
-        # file_modified = reorder(yaml_data, ordering)
+        yaml_data = read_yaml_from_file(filepath)
         file_modified = reorder(yaml_data, ordering)
         if file_modified:
             print("File order modified!")
-            dump_yaml(filepath + "_new.yml", yaml_data)
+            dump_yaml_to_file(filepath + "_new.yml", yaml_data)
         else:
             print("File order was fine!")
 
@@ -139,23 +108,7 @@ def run_autoformatter(filepaths: List[str], ordering: dict):
     return modified
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("instancefiles", nargs="+", help="JSON or YAML files to check.")
-
-    args = parser.parse_args()
-
-    order_modified = run_autoformatter(args, ORDERING)
-
-    if order_modified:
-        # pre-commit modifying files should end as a failure
-        # by convention
-        sys.exit(1)
-    else:
-        sys.exit(0)
-
-
 # run_autoformatter(["/home/bgerard/dev/gitlabci-jsonschema-lint/gitlabci_lint/tests/sample_valid_gitlabci.yml"], ORDERING)
-run_autoformatter(
-    ["/home/bgerard/dev/cp-flake8-testing-convention/.gitlab-ci.yml"], ORDERING
-)
+# run_autoformatter(
+#     ["/home/bgerard/dev/cpwp-api/.gitlab-ci2.yml"], ORDERING
+# )

@@ -2,11 +2,11 @@ import os
 from collections import namedtuple
 
 from gitlabci_lint.linter import lint_it, run_check
+from gitlabci_lint.tests import TESTS_DIR
 
 
-CUR_DIR = os.path.dirname(os.path.abspath(__file__))
-VALID_SAMPLE_GITLABCI = os.path.join(CUR_DIR, "sample_valid_gitlabci.yml")
-INVALID_SAMPLE_GITLABCI = os.path.join(CUR_DIR, "sample_invalid_gitlabci.yml")
+VALID_SAMPLE_GITLABCI = os.path.join(TESTS_DIR, "sample_valid_gitlabci.yml")
+INVALID_SAMPLE_GITLABCI = os.path.join(TESTS_DIR, "sample_invalid_gitlabci.yml")
 
 args_tuple = namedtuple("args", "instancefiles")
 

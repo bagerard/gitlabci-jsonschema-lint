@@ -1,16 +1,9 @@
-from io import StringIO
+from ruamel.yaml import YAML
 
-from ruamel.yaml import YAML, CommentedMap
-
-from gitlabci_lint.autoformatter import reorder
+from gitlabci_lint.autoformatter.autoformatter import reorder
+from gitlabci_lint.tests.autoformatter.utils import get_dumped_yaml
 
 yaml = YAML()
-
-
-def _get_dumped_yaml(data: CommentedMap) -> str:
-    dumped_str = StringIO()
-    yaml.dump(data, stream=dumped_str)
-    return dumped_str.getvalue()
 
 
 def test_reorder__flat_full_match__consistently_reordered():
@@ -24,7 +17,7 @@ def test_reorder__flat_full_match__consistently_reordered():
     modified = reorder(data, ordering)
     assert modified is True
 
-    assert _get_dumped_yaml(data) == (
+    assert get_dumped_yaml(data) == (
         "occupation: Architect      # This is an occupation comment\n"
         "about: Art Vandelay is a fictional character that George invents...\n"
         "first_name: Art\n"
@@ -74,7 +67,7 @@ def test_reorder__nested_reordering_only__top_level_order_unaltered_nested_is_al
     modified = reorder(data, ordering)
     assert modified is True
 
-    assert _get_dumped_yaml(data) == (
+    assert get_dumped_yaml(data) == (
         "first_name: Art\n"
         "occupation: Architect       # This is an occupation comment\n"
         "message:\n"
@@ -103,7 +96,7 @@ def test_reorder__mixed_reordering__consistently_reordered():
     modified = reorder(data, ordering)
     assert modified is True
 
-    assert _get_dumped_yaml(data) == (
+    assert get_dumped_yaml(data) == (
         "message:\n"
         "  warning: some_warning\n"
         "  info: some_ingo\n"
