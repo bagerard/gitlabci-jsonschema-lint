@@ -1,8 +1,4 @@
-from typing import List
-
 from ruamel.yaml import CommentedMap
-
-from gitlabci_lint.autoformatter import yaml, read_yaml_from_file, dump_yaml_to_file
 
 _AnyJob_ = "_AnyJob_"
 
@@ -91,24 +87,3 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
 
         print(list(data.keys()))
     return modified
-
-
-def run_autoformatter(filepaths: List[str], ordering: dict):
-    modified = False
-    for filepath in filepaths:
-        yaml_data = read_yaml_from_file(filepath)
-        file_modified = reorder(yaml_data, ordering)
-        if file_modified:
-            print("File order modified!")
-            dump_yaml_to_file(filepath + "_new.yml", yaml_data)
-        else:
-            print("File order was fine!")
-
-        modified = modified or file_modified
-    return modified
-
-
-# run_autoformatter(["/home/bgerard/dev/gitlabci-jsonschema-lint/gitlabci_lint/tests/sample_valid_gitlabci.yml"], ORDERING)
-# run_autoformatter(
-#     ["/home/bgerard/dev/cpwp-api/.gitlab-ci2.yml"], ORDERING
-# )

@@ -7,19 +7,14 @@ yaml.indent(mapping=2, sequence=4, offset=2)
 yaml.width = 1_000_000  # High to avoid that it add line-breaks
 
 
-def read_yaml_from_file(filepath: str) -> CommentedMap:
-    with open(filepath, "r") as fin:
-        return yaml.load(fin)
-
-
 def dump_yaml_to_file(filepath: str, data: CommentedMap) -> CommentedMap:
     with open(filepath, "w") as fout:
         return yaml.dump(data, stream=fout)
 
 
-def read_yaml_from_file_safe(filepath: str):
+def read_file_content(filepath: str) -> str:
     with open(filepath, "r") as fin:
-        return load_safe_yaml(fin)
+        return fin.read()
 
 
 def load_safe_yaml(filepath_or_str):

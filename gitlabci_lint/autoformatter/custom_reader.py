@@ -50,14 +50,16 @@ def restore_tl_key_comments_or_lb(
     data: CommentedMap, tl_key_comments: Dict[str, str]
 ) -> None:
     LB = "\n"  # line break
-    yaml_contain_header_comment = data.ca.comment and data.ca.comment[1]
     for key_idx, key in enumerate(data.keys()):
         tl_comment = tl_key_comments.get(key, "")
-        tl_comment = (
-            tl_comment
-            if key_idx == 0 and not yaml_contain_header_comment
-            else LB + tl_comment
-        )
+        if key_idx == 0:
+            header_comment_present = data.ca.comment and data.ca.comment[1]
+            if header_comment_present:
+                tl_comment = LB + tl_comment
+            elif not tl_comment:
+                continue
+        else:
+            tl_comment = LB + tl_comment
         data.yaml_set_comment_before_after_key(
             key=key,
             before=tl_comment,

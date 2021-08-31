@@ -319,3 +319,14 @@ def test_restore_tl_key_comments_or_lb__header__comment_restored_and_lb_between_
     """
     )
     assert get_dumped_yaml(data) == expected_content.getvalue()
+
+
+def test_restore_tl_key_comments_or_lb__first_key_no_comment_no_header__no_lb_added():
+    yaml_str = YamlString(
+        """\
+    first_name: Art
+    """
+    )
+    data = yaml.load(yaml_str)
+    restore_tl_key_comments_or_lb(data, tl_key_comments={})
+    assert get_dumped_yaml(data) == yaml_str.getvalue()
