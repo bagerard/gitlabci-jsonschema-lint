@@ -23,7 +23,12 @@ setup(
     long_description_content_type="text/markdown",
     packages=["gitlabci_lint"],
     install_requires=INSTALL_REQUIRES,
-    entry_points={"console_scripts": ["gitlabci-jsonschema-lint = gitlabci_lint:main"]},
+    entry_points={
+        "console_scripts": [
+            "gitlabci-jsonschema-linter = gitlabci_lint.linter:main",
+            "gitlabci-autoformatter = gitlabci_lint.autoformatter.main:main",
+        ]
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "Topic :: Software Development :: Quality Assurance",

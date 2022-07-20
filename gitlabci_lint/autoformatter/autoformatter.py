@@ -44,7 +44,6 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
         return False
 
     for dkey in present_ordering_keys + rest_data_keys:
-        print(f"Checking {dkey}")
         do_reorder_key = False
         do_deeper_reorder = False
         reordering_value = None
@@ -66,7 +65,6 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
                 do_deeper_reorder = True
 
         if do_deeper_reorder:
-            print(f"dig in {dkey}")
             assert reordering_value, reordering_value
             deeper_modified = reorder(
                 data=data[dkey], ordering=reordering_value, level=level + 1
@@ -77,7 +75,6 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
             reordering_pos = present_ordering_keys.index(dkey)
             curr_pos = list(data.keys()).index(dkey)
             if reordering_pos == curr_pos:
-                print(f"{dkey} already well positioned")
                 continue
 
             print(f"reorder {dkey} from {curr_pos} to {reordering_pos}")
@@ -85,5 +82,4 @@ def reorder(data: CommentedMap, ordering: dict, level=YAML_ROOT) -> bool:
             data.insert(reordering_pos, dkey, popped_data)
             modified = True
 
-        print(list(data.keys()))
     return modified

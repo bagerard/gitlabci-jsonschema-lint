@@ -53,7 +53,7 @@ def main():
         print(f"Processing {instancefile}...")
         curr_file_modified = process_file(instancefile)
         if curr_file_modified:
-            print(f"Modification were applied")
+            print(f"Modification(s) were applied")
         else:
             print(f"No modification were required")
         any_file_modified = any_file_modified or curr_file_modified
