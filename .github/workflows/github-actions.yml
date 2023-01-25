@@ -18,10 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
-        python-version: 3.7
+        python-version: 3.9
     - run: bash .github/workflows/install_ci_python_dep.sh
     - run: pre-commit run -a
 
@@ -32,11 +31,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9, pypy3]
+        python-version: [3.8, 3.9, "3.10", pypy3]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: install ci dependencies
@@ -53,10 +52,9 @@ jobs:
     if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v')
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+    - uses: actions/setup-python@v4
       with:
-        python-version: 3.7
+        python-version: 3.9
     - name: build wheel
       run: |
         pip install wheel
